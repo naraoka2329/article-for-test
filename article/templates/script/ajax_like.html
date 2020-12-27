@@ -1,0 +1,28 @@
+<script type="text/javascript">
+    $(document).ready(function (event) {
+        $(document).on('click', '#like', function (event) {
+            event.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'like' %}",
+                data: {
+                    'article_id': $(this).attr('name'),
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                dataType: 'json',
+                success: function (response) {
+                    selector = document.getElementsByName(response.article_id);
+                    if (response.liked) {
+                        $(selector).html("<i class='fas fa-lg fa-heart like-red'></i>");
+                    }
+                    else {
+                        $(selector).html("<i class='far fa-lg fa-heart like-red'></i>");
+                    }
+                    selector2 = document.getElementsByName(response.article_id + "-count");
+                    $(selector2).text(response.count);
+                    console.log('ajaxしてますよ')
+                }
+            });
+        });
+    });
+</script>

@@ -1,0 +1,12 @@
+{% extends 'article/base.html' %}
+
+{% block content %}
+<div class="">
+    <div>タイトル{{ article.title }}</div>
+    <div>テキスト{{ article.text }}</div>
+    <div>ユーザー{{ article.user }}</div>
+    <div>コメント数{{ comments.count }}</div>
+    
+    {% include 'article/comment.html' %}
+</div>
+{% endblock %}

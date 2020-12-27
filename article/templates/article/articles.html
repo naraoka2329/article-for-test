@@ -1,0 +1,32 @@
+{% extends 'article/base.html' %}
+
+{% block content %}
+    <h2>記事一覧</h2>
+
+    <div calss="articles-outer">
+        {% for article in articles %}
+        <div class="article">
+            <a href="{% url 'article_detail' article_id=article.id %}"><h2>{{ article.title }}</h2></a>>
+            <div class="like-outer">
+                {% include 'article/like.html' %}
+            </div>
+            <hr>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!--
+        id=likeとして定義されたいいねbuttonをクリック（POST）されたら、Ajaxはlike.htmlを呼び出し、
+        必要なデータ（button内のname属性の値）をjson形式で送る。
+    'csrfmiddlewaretoken': '{{ csrf_token }}'はDjangoでPOST送信する場合に必要なトークンである。
+    通信に成功すると、success: function(response){...}を実行する。
+    responseにはLikeViewで定義した3つの返り値(article_id, liked, count)が含まれている。
+    selector = document.getElementsByName(response.article_id);でいいねされた記事の
+    <button>...</button>部分を選択する。
+    response.likedでハートを塗りつぶすかどうかを変える。
+    selector2 = document.getElementsByName(response.article_id + "-count");で
+    いいねされた記事のいいね総数を表示する部分を選択し、
+    $(selector2).text(response.count);で更新する。
+    -->
+    
+{% endblock %}
