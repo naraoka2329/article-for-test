@@ -5,13 +5,13 @@
     したがって、ArticleViewで定義しているliked_listに対象の記事(userがいいねした記事)
     が入っていれば塗りつぶされたハートを表示、入っていなければ塗りつぶされたハートを表示
 -->
-<!--<form action="{% url 'like' %}" method="POST">-->
+<!--<form action="" method="POST">-->
 
 <form>
     {% if article.id in liked_list %}
-    <button id="like" name="{{ article.id }}" class="clear-decoration"><i class="fas fa-lg fa-heart like-red" ></i></button>
+    <button id="like{{ article.id }}" name="{{ article.id }}" class="clear-decoration"><i class="fas fa-lg fa-heart like-red" ></i></button>
     {% else %}
-    <button id="like" name="{{ article.id }}" class="clear-decoration"><i class="far fa-lg fa-heart  like-red"></i></button>
+    <button id="like{{ article.id }}" name="{{ article.id }}" class="clear-decoration"><i class="far fa-lg fa-heart  like-red"></i></button>
     {% endif %}
 </form>
-<p name="{{ article.id }}-count">{{ article.like_set.count }}</p>
+<p id="{{ article.id }}-count" name="{{ article.id }}-count">{{ article.like_set.count }}</p>

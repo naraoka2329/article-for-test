@@ -9,5 +9,6 @@ urlpatterns = [
     path('contact/', views.ContactFormView.as_view(), name='contact_form'),
     path('contact/result/', views.ContactResultView.as_view(), name='contact_result'),   
     #アカウント作成のurl
-    path('accounts/signup/', views.signup , name='signup'), 
+    path('accounts/signup/', views.signup , name='signup'),
+    
 ]

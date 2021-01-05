@@ -9,6 +9,7 @@ from django.views.generic.edit import FormView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
+import json
 
 
 def detail(request, article_id):
@@ -17,12 +18,12 @@ def detail(request, article_id):
     if request.method == "POST":
         print("POST:")
         print("hoge")
-        form = CmtForm(request.POST or None)
-        if form.is_valid():
-            texthoge = request.POST.get('text')
-            comment = Comment.objects.create(article=article, user=request.user, text=texthoge)
-            comment.save()
-            
+        #form = CmtForm(request.POST or None)
+        #if form.is_valid():
+        texthoge = request.POST.get('text')
+        comment = Comment.objects.create(article=article, user=request.user, text=texthoge)
+        comment.save()
+        
     else:
         print("else:")
         form = CmtForm()
@@ -64,13 +65,22 @@ def LikeView(request):
     #POSTつまり「いいねの押下」で呼ばれないと何もしない
     #最後のif request.is_ajaxで返しているようにAjax通信でなければなにもreturnしない
     if request.method == "POST":
-        article = get_object_or_404(Article, pk=request.POST.get('article_id'))
+        print(request.body)
+        print(request.POST)
+        print(json.loads(request.body))
+        print('LikeViewのif request.method=="POST"の中')
+        #article = get_object_or_404(Article, pk=request.POST.get('article_id'))
+        
+        article_id = json.loads(request.body)['article_id']
+        article = get_object_or_404(Article, pk=article_id)
         user = request.user
         liked = False
         like = Like.objects.filter(article=article, user=user)
         if like.exists():
+            print('LikeViewのif like.exists()')
             like.delete()
         else:
+            print('LikeViewのif like.exists():else')
             like.create(article=article, user=user)
             liked = True
         
@@ -79,11 +89,12 @@ def LikeView(request):
             'liked': liked,#いいねしたのか(True)、いいねを取り消したのか(False)
             'count': article.like_set.count(),#記事のいいね総数
         }
-    
-    if request.is_ajax():
+        print(context)
+    #if request.is_ajax():
+    #    print('LikeViewのif request.is_ajax()の中')
         return JsonResponse(context)
-    else:
-        print("これはis_ajax()がfalse")
+    #else:
+    #    print("LikeViewのこれはis_ajax()がfalse")
 
 def comment_delete(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)

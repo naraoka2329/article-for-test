@@ -2,7 +2,7 @@
 
 {% block content %}
     <h2>記事一覧</h2>
-
+    <h4>記事数：<span id="article_count">{{ articles.count }}</span></h4>
     <div calss="articles-outer">
         {% for article in articles %}
         <div class="article">

@@ -1,0 +1,31 @@
+<script type="text/javascript">
+    $(document).ready(function (event) {
+        $(document).on('click', '#like', function (event) {
+            event.preventDefault();
+            $.ajax({//引数にコールバック関数を持たせる
+                type: 'POST',
+                url: "{% url 'like' %}",
+                data: {
+                    'article_id': $(this).attr('name'),
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                dataType: 'json',
+                success: function (hoge) {//コールバック部分、hogeにJsonResponse(context)が渡されている
+                    console.log(`hoge.article_id:${hoge.article_id}, hoge.liked:${hoge.liked},  hoge.count: ${hoge.count}`);
+                    selector = document.getElementsByName(hoge.article_id);
+                    if (hoge.liked) {
+                        $(selector).html("<i class='fas fa-lg fa-heart like-red'></i>");
+                    }
+                    else {
+                        $(selector).html("<i class='far fa-lg fa-heart like-red'></i>");
+                    }
+                    selector2 = document.getElementsByName(hoge.article_id + "-count");
+                    $(selector2).text(hoge.count);
+                    console.log('ajax:success')
+                },
+                error: function(data) {
+                alert('error');
+              }});
+        });
+    });
+</script>

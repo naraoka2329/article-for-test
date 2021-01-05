@@ -1,10 +1,11 @@
 
 <script type="text/javascript">
     $(document).ready(function (event) {
-        console.log('aaaaaa');
+        console.log('これはcomment.html');
         $(document).on('submit', '.comment-form', function (event) {
-            console.log('bbbbbbb');
+            console.log('preventDefaultの前');
             event.preventDefault();
+            console.log('preventDefaultの後');
             console.log($(this).serialize());
             $.ajax({
                 type: 'POST',
