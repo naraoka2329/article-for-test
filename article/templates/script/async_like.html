@@ -1,0 +1,61 @@
+<script type="text/javascript">
+    const article_count = parseInt(document.getElementById('article_count').innerHTML);
+    console.log(typeof article_count);
+    for (i = 0; i < article_count; i++) {
+        const id_like = document.getElementById(`like${i + 1}`);
+        console.log(id_like);
+        id_like.addEventListener('click', e => {
+            console.log(id_like.getAttribute('name'));
+            console.log(id_like.getAttribute('name'));
+            console.log(typeof id_like.getAttribute('name'));
+            e.preventDefault();
+
+            const url = "{% url 'like' %}";
+            console.log(typeof url);
+            const data = { article_id: id_like.getAttribute('name') };
+            console.log(data);
+
+            async function asyncLike() {
+                const result = await fetch(url, {
+                    method: 'POST',
+                    mode: 'same-origin',// Do not send CSRF token to another domain.
+                    headers: {
+                        'Content-Type': "application/json",
+                        'X-CSRFToken': csrftoken,
+                    },
+                    body: JSON.stringify(data),
+                });
+                console.log(result);//195 Response {type: "basic", url: "http://127.0.0.1:8000/like", redirected: false, status: 200, ok: true, …}
+                const j = await result.json();
+                console.log(j);//197 {article_id: 1, liked: false, count: 1}
+                return j;
+            };
+
+            asyncLike()
+                .then(j => {
+                    console.log(j);//203 {article_id: 1, liked: false, count: 1}
+                    console.log(j["article_id"]);//204 1
+                    console.log(j["liked"]);//205 false
+                    console.log(j["count"]);
+                    console.log(id_like.children[0].classList);
+                    if (j["liked"]) {
+                        console.log(id_like.children[0].classList);
+                        id_like.children[0].classList.remove("far");
+                        id_like.children[0].classList.add("fas");
+                        console.log(id_like.children[0].classList);
+                    }
+                    else {
+                        console.log(id_like.children[0].classList);
+                        id_like.children[0].classList.remove("fas");
+                        id_like.children[0].classList.add("far");
+                        console.log(id_like.children[0].classList);
+                    };
+                    console.log(document.getElementById(`${j["article_id"]}-count`).innerHTML);
+                    document.getElementById(`${j["article_id"]}-count`).innerHTML = `${j["count"]}`;
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+        });
+    };
+</script>

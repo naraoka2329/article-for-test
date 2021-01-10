@@ -1,0 +1,24 @@
+
+<script type="text/javascript">
+    $(document).ready(function (event) {
+        console.log('これはcomment.html');
+        $(document).on('submit', '.comment-form', function (event) {
+            console.log('preventDefaultの前');
+            event.preventDefault();
+            console.log('preventDefaultの後');
+            console.log($(this).serialize());
+            $.ajax({
+                type: 'POST',
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                dataType: 'json',
+                success: function (response) {
+                    $('.main-comment-section').html(response['form']);
+                },
+                error: function (rs, e) {
+                    console.log(rs.responseText);
+                },
+            });
+        });
+    });
+</script>
