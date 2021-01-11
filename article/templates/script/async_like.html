@@ -4,6 +4,7 @@
     for (i = 0; i < article_count; i++) {
         const id_like = document.getElementById(`like${i + 1}`);
         console.log(id_like);
+        console.log(typeof id_like);//object
         id_like.addEventListener('click', e => {
             console.log(id_like.getAttribute('name'));
             console.log(id_like.getAttribute('name'));

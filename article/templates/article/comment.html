@@ -1,31 +1,34 @@
 <!--コメントフォーム-->
 {% if request.user.is_authenticated %}
 <div class="main-comment-section">
-<form method="POST" action="." class="comment-form form-inline mb-0">
-    {% csrf_token %}
-    <button type="submit" class="btn-outline-secondary col-1">投稿</button>
-    <label class="sr-only" for="id_text">コメント</label>
-    <textarea name="text" class="form-control-sm col-11" placeholder="コメントする…" required="true" id="id_text"></textarea>
-</form>
-{% endif %}
+    <form method="POST" action="." id="add_comment" class="comment-form form-inline mb-0">
+        {% csrf_token %}
+        <button type="submit" class="btn-outline-secondary col-1">投稿</button>
+        <label class="sr-only" for="id_text">コメント</label>
+        <textarea name="text" class="form-control-sm col-11" placeholder="コメントする…" required="true"
+            id="comment_textarea"></textarea>
+    </form>
+    {% endif %}
 
-<div class="container">
-    <h2 class="text-center text-secondary my-4">コメント一覧({{ comments.count }})</h2>
+    <div class="container">
+        <h2 class="text-center text-secondary my-4">コメント一覧(<var id="comment_count">{{ comments.count }}</var>)</h2>
+        <div id="comment_list">
+            {% for comment in comments %}
+            <div class="comment">
+                <p class="mb-0">{{ comment.text }}</p>
+                <p>{{ comment.user.username }} / {{ comment.created_at|date:"Y年n月j日" }}
 
-    {% for comment in comments %}
-    <div class="" id="articles">
-        <p class="mb-0">{{ comment.text }}</p>
-        <p>{{ comment.user.username }} / {{ comment.created_at|date:"Y年n月j日" }}
-
-            <!--削除ボタンの表示、非表示-->
-            {% if request.user == article.user or request.user == c.user %}
-            <a href="{% url 'comment_delete' comment_id=comment.id %}"><i class="text-danger far fa-trash-alt"></i></a>
-        </p>
-        <!-- {% endif %} -->
+                    <!--削除ボタンの表示、非表示-->
+                    {% if request.user == article.user or request.user == comment.user %}
+                    <a href="{% url 'comment_delete' comment_id=comment.id %}"><i
+                            class="text-danger far fa-trash-alt"></i></a>
+                </p>
+                <!-- {% endif %} -->
+            </div>
+            <hr>
+            {% empty %}
+            <p class="text-secondary text-center">コメントはありません</p>
+            {% endfor %}
+        </div>
     </div>
-    <hr>
-    {% empty %}
-    <p class="text-secondary text-center">コメントはありません</p>
-    {% endfor %}
-</div>
 </div>

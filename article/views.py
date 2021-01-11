@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import Article, Like, Comment
 from django.http import JsonResponse
-from .forms import CmtForm, ContactForm
+from .forms import ContactForm
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
@@ -11,6 +11,36 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
 import json
 
+def comment_save(request, article_id):
+    print('comment_save():line1')
+    if request.method == "POST":
+        print(request.POST)
+        print(request.body)
+        print("hage")
+        print(request.body.decode())
+        print("hogegege")
+        article = get_object_or_404(Article, id=article_id)
+        print(article)
+        texthoge = request.body.decode()
+        comment = Comment.objects.create(article=article, user=request.user, text=texthoge)
+        comment.save()
+        print("コメントsaveしたよ")
+        comments = Comment.objects.filter(article=article)
+        print('コメント数えるよ')
+
+        d = {
+            'user': comment.user.username,
+            'text': comment.text,
+            'y': comment.created_at.year,
+            'm': comment.created_at.month,
+            'd': comment.created_at.day,
+            'count': comments.count()
+        }
+        
+        print("JsonResponseするよ")
+        return JsonResponse(d)
+    else:
+        print("リクエストメソッドがPOSTじゃないよ")
 
 def detail(request, article_id):
     article = get_object_or_404(Article, id=article_id)
@@ -23,10 +53,10 @@ def detail(request, article_id):
         texthoge = request.POST.get('text')
         comment = Comment.objects.create(article=article, user=request.user, text=texthoge)
         comment.save()
-        
+        print("コメントsaveしたよ")
     else:
         print("else:")
-        form = CmtForm()
+        #form = CmtForm()
     context = {
         'article': article,
         'comments': comments,
@@ -35,9 +65,11 @@ def detail(request, article_id):
     if request.is_ajax():
         print("ajax request.method", request.method)
         print("ajax request.is_ajax", request.is_ajax())
-        print("hage")
+        print(request.POST)
+        print(request.body)
         html = render_to_string('article/comment.html', context, request=request )
-        return JsonResponse({'form': html, })    
+        print("JsonResponseするよ")
+        return JsonResponse({'form': html, })
 
     return render(request, 'article/detail.html', context)
 

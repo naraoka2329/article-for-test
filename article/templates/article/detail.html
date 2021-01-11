@@ -2,11 +2,15 @@
 
 {% block content %}
 <div class="">
-    <div>タイトル{{ article.title }}</div>
-    <div>テキスト{{ article.text }}</div>
-    <div>ユーザー{{ article.user }}</div>
-    <div>コメント数{{ comments.count }}</div>
+    <div>タイトル: {{ article.title }}</div>
+    <div>テキスト: {{ article.text }}</div>
+    <div>ユーザー: {{ article.user }}</div>
     
     {% include 'article/comment.html' %}
+    
 </div>
+
+
+{% include 'script/async_comment.html' %}
 {% endblock %}
+

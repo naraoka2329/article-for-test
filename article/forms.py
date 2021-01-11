@@ -5,10 +5,10 @@ from django.core.mail import BadHeaderError, send_mail
 from django.http import HttpResponse
 
 
-class CmtForm(forms.ModelForm):
-    class Meta:
-        model = Comment
-        fields = ['text']
+#class CmtForm(forms.ModelForm):
+#    class Meta:
+#        model = Comment
+#        fields = ['text']
 
 class ContactForm(forms.Form):
     name = forms.CharField(

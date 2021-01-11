@@ -1,24 +1,68 @@
-
 <script type="text/javascript">
-    $(document).ready(function (event) {
-        console.log('これはcomment.html');
-        $(document).on('submit', '.comment-form', function (event) {
-            console.log('preventDefaultの前');
-            event.preventDefault();
-            console.log('preventDefaultの後');
-            console.log($(this).serialize());
-            $.ajax({
-                type: 'POST',
-                url: $(this).attr('action'),
-                data: $(this).serialize(),
-                dataType: 'json',
-                success: function (response) {
-                    $('.main-comment-section').html(response['form']);
+    function clear_textarea() {
+        let textareaForm = document.getElementById("comment_textarea");
+        textareaForm.value = '';
+    }
+    const id_commemt_save = document.getElementById("add_comment");
+    console.log(id_commemt_save);
+    id_commemt_save.addEventListener('submit', e => {
+        e.preventDefault();
+
+        const url = "{% url 'comment_save' article_id=article.id %}";
+        console.log(url);
+        const data = document.getElementById('comment_textarea').value;//encodeURIComponent()
+        console.log(data);
+
+        async function asyncComment() {
+            const result = await fetch(url, {
+                method: 'POST',
+                mode: 'same-origin',//
+                headers: {
+                    'Content-Type': "application/json",//'application/x-www-form-urlencoded; charset=utf-8',
+                    'X-CSRFToken': csrftoken,
                 },
-                error: function (rs, e) {
-                    console.log(rs.responseText);
-                },
+                body: data,
             });
-        });
+            console.log(result);
+            const j = await result.json();
+            console.log(j);
+            return j;
+        };
+
+        asyncComment()
+            .then(d => {
+                console.log(d);
+                let comment_user = d['user'];
+                let comment_text = d['text'];
+                let comment_year = d['y'];
+                let comment_month = d['m'];
+                let comment_day = d['d'];
+                let comment_count = d['count'];
+                console.log(typeof d);
+                let new_div = document.createElement("div"); // div要素作成
+                let new_hr = document.createElement("hr"); // div要素作成
+                let new_text_comment = document.createTextNode(`${comment_text}`); // テキストノードを作成
+                let new_p_text = document.createElement("p"); // p要素作成
+                let new_p_name_date = document.createElement("p");
+                let new_text_name_date = document.createTextNode(`${comment_user} / ${comment_year}年${comment_month}月${comment_day}日`)
+                new_p_text.appendChild(new_text_comment); // p要素にテキストノードを追加
+                new_p_name_date.appendChild(new_text_name_date); // p要素にテキストノードを追加
+                new_div.setAttribute("class", "comment");
+                new_p_text.setAttribute("class", "mb-0");
+                new_div.appendChild(new_p_text);
+                new_div.appendChild(new_p_name_date);
+
+                let parentDiv = document.getElementById("comment_list");
+                parentDiv.insertBefore(new_hr, parentDiv.firstChild);
+                parentDiv.insertBefore(new_div, parentDiv.firstChild);
+
+                document.getElementById("comment_count").innerHTML = comment_count;
+
+
+                clear_textarea()
+            })
+            .catch(e => {
+                console.log(e);
+            });
     });
 </script>

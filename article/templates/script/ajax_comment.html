@@ -6,6 +6,8 @@
             console.log('preventDefaultの前');
             event.preventDefault();
             console.log('preventDefaultの後');
+            console.log(this);
+            console.log(typeof this);
             console.log($(this).serialize());
             $.ajax({
                 type: 'POST',
