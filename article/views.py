@@ -29,6 +29,7 @@ def comment_save(request, article_id):
         print('コメント数えるよ')
 
         d = {
+            'id': comment.id,
             'user': comment.user.username,
             'text': comment.text,
             'y': comment.created_at.year,
@@ -44,7 +45,7 @@ def comment_save(request, article_id):
 
 def detail(request, article_id):
     article = get_object_or_404(Article, id=article_id)
-    comments = Comment.objects.filter(article=article).order_by('created_at')
+    comments = Comment.objects.filter(article=article).order_by('created_at').reverse()
     if request.method == "POST":
         print("POST:")
         print("hoge")
@@ -130,8 +131,17 @@ def LikeView(request):
 
 def comment_delete(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
+    article = get_object_or_404(Article, id=comment.article.id)
     comment.delete()
-    return redirect('article_detail', article_id=comment.article.id)
+    comments = Comment.objects.filter(article=article)
+
+    d = {
+        'count': comments.count()
+    }
+        
+    print("JsonResponseするよ")
+    return JsonResponse(d)
+#    return redirect('article_detail', article_id=comment.article.id)
 
 class ContactFormView(FormView):
     template_name = 'contact/contact_form.html'

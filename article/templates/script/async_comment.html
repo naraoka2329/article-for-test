@@ -1,10 +1,52 @@
 <script type="text/javascript">
-    function clear_textarea() {
+    const clear_textarea = () => {
         let textareaForm = document.getElementById("comment_textarea");
         textareaForm.value = '';
     }
+
+    const getHref = (ele) => {
+        let href_value = ele.href;
+        console.log(href_value);
+        return href_value;
+    }
+
+    const getId = (ele) => {
+        let id_value = ele.id;
+        console.log(id_value);
+        return id_value;
+    }
+
     const id_commemt_save = document.getElementById("add_comment");
-    console.log(id_commemt_save);
+
+    const create_comment_node = (text, user, year, month, day, id) => {
+        let new_div = document.createElement("div");
+        let new_hr = document.createElement("hr");
+        let new_text_comment = document.createTextNode(`${text}`);
+        let new_p_text = document.createElement("p");
+        let new_p_name_date = document.createElement("p");
+        let new_text_name_date = document.createTextNode(`${user} / ${year}年${month}月${day}日`)
+        let new_span = document.createElement("span");
+        let new_i = document.createElement("i");
+
+        new_p_text.appendChild(new_text_comment);
+        new_p_name_date.appendChild(new_text_name_date);
+        new_span.setAttribute("style", "cursor: pointer;");
+        new_span.setAttribute("id", `${id}`);
+        new_span.setAttribute("onclick", "delComment(this)");
+        new_i.setAttribute("class", "text-danger far fa-trash-alt");
+        new_span.appendChild(new_i);
+        new_p_name_date.appendChild(new_span);
+
+        new_div.setAttribute("class", "comment");
+        new_p_text.setAttribute("class", "mb-0");
+        new_div.appendChild(new_p_text);
+        new_div.appendChild(new_p_name_date);
+        new_div.appendChild(new_hr);
+
+        return new_div;
+    };
+
+
     id_commemt_save.addEventListener('submit', e => {
         e.preventDefault();
 
@@ -31,33 +73,20 @@
 
         asyncComment()
             .then(d => {
-                console.log(d);
+                let comment_id = d['id'];
                 let comment_user = d['user'];
                 let comment_text = d['text'];
                 let comment_year = d['y'];
                 let comment_month = d['m'];
                 let comment_day = d['d'];
                 let comment_count = d['count'];
-                console.log(typeof d);
-                let new_div = document.createElement("div"); // div要素作成
-                let new_hr = document.createElement("hr"); // div要素作成
-                let new_text_comment = document.createTextNode(`${comment_text}`); // テキストノードを作成
-                let new_p_text = document.createElement("p"); // p要素作成
-                let new_p_name_date = document.createElement("p");
-                let new_text_name_date = document.createTextNode(`${comment_user} / ${comment_year}年${comment_month}月${comment_day}日`)
-                new_p_text.appendChild(new_text_comment); // p要素にテキストノードを追加
-                new_p_name_date.appendChild(new_text_name_date); // p要素にテキストノードを追加
-                new_div.setAttribute("class", "comment");
-                new_p_text.setAttribute("class", "mb-0");
-                new_div.appendChild(new_p_text);
-                new_div.appendChild(new_p_name_date);
 
+                let new_div = create_comment_node(comment_text, comment_user, comment_year, comment_month, comment_day, comment_id);
                 let parentDiv = document.getElementById("comment_list");
-                parentDiv.insertBefore(new_hr, parentDiv.firstChild);
+
                 parentDiv.insertBefore(new_div, parentDiv.firstChild);
 
                 document.getElementById("comment_count").innerHTML = comment_count;
-
 
                 clear_textarea()
             })
@@ -65,4 +94,40 @@
                 console.log(e);
             });
     });
+
+
+
+    const delComment = (e) => {
+        const commentNode = e.parentNode.parentNode;
+        console.log(commentNode);
+        const url = `/comment/${e.id}/delete/`;
+        console.log(`クリックしたコメントを削除するよ${url}`);
+
+        async function asyncCommentDel() {
+            const result = await fetch(url, {
+                method: 'POST',
+                mode: 'same-origin',//
+                headers: {
+                    'Content-Type': "application/json",//'application/x-www-form-urlencoded; charset=utf-8',
+                    'X-CSRFToken': csrftoken,
+                },
+            });
+            const j = await result.json();
+            console.log("j:", j);
+            return j;
+        };
+        asyncCommentDel()
+            .then(d => {
+                let comment_count = d['count'];
+                
+                console.log("DOMるよ", commentNode);
+                commentNode.remove();
+                document.getElementById("comment_count").innerHTML = comment_count;
+            })
+            .catch(e => {
+                console.log("エラーだよ");
+            });
+    }
+
+
 </script>

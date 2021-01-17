@@ -20,14 +20,13 @@
 
                     <!--削除ボタンの表示、非表示-->
                     {% if request.user == article.user or request.user == comment.user %}
-                    <a href="{% url 'comment_delete' comment_id=comment.id %}"><i
-                            class="text-danger far fa-trash-alt"></i></a>
+                    <span style="cursor: pointer;" id="{{ comment.id }}" onclick="delComment(this)"><i
+                            class="text-danger far fa-trash-alt"></i></span>
+                    {% endif %}
                 </p>
-                <!-- {% endif %} -->
+                <hr>
             </div>
-            <hr>
-            {% empty %}
-            <p class="text-secondary text-center">コメントはありません</p>
+>
             {% endfor %}
         </div>
     </div>

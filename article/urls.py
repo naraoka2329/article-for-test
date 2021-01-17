@@ -6,7 +6,7 @@ urlpatterns = [
     path('detail/<int:article_id>/', views.detail, name='article_detail'),
     path('commentsave/<int:article_id>/', views.comment_save, name='comment_save'),
     path('like', views.LikeView, name='like'),
-    path('comment/<int:comment_id>/', views.comment_delete, name='comment_delete'),
+    path('comment/<int:comment_id>/delete/', views.comment_delete, name='comment_delete'),
     path('contact/', views.ContactFormView.as_view(), name='contact_form'),
     path('contact/result/', views.ContactResultView.as_view(), name='contact_result'),   
     #アカウント作成のurl
